@@ -1,0 +1,49 @@
+{
+	"order_uid": "d456feb7b2b84b6test",
+	"track_number": "TRACK456789",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Diana Prince",
+		"phone": "+972456789012",
+		"zip": "4567890",
+		"city": "Eilat",
+		"address": "Beach Rd 4",
+		"region": "Southern District",
+		"email": "diana@example.com"
+	},
+	"payment": {
+		"transaction": "d456feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 750,
+		"payment_dt": 1637907727,
+		"bank": "bank4",
+		"delivery_cost": 50,
+		"goods_total": 700,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 4567890,
+			"track_number": "TRACK456789",
+			"price": 700,
+			"rid": "item456",
+			"name": "Headphones",
+			"sale": 15,
+			"size": "N/A",
+			"total_price": 700,
+			"nm_id": 456789,
+			"brand": "BrandD",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer4",
+	"delivery_service": "service4",
+	"shardkey": "4",
+	"sm_id": 4,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

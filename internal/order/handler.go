@@ -12,8 +12,28 @@ import (
 )
 
 const (
-	ordersURl = "/orders"
-	orderURl  = "/orders/:id"
+	ordersURl  = "/orders"
+	orderURl   = "/orders/:id"
+	queryOrder = `
+        SELECT order_uid, track_number, entry, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard, locale, internal_signature
+        FROM orders
+        WHERE order_uid = $1
+    `
+	queryDelivery = `
+        SELECT name, phone, zip, city, address, region, email
+        FROM deliveries
+        WHERE order_uid = $1
+    `
+	queryPayment = `
+        SELECT transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee
+        FROM payments
+        WHERE order_uid = $1
+    `
+	queryItems = `
+        SELECT chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status
+        FROM items
+        WHERE order_uid = $1
+    `
 )
 
 type handler struct {
@@ -36,7 +56,23 @@ func (h *handler) Register(router *httprouter.Router) {
 }
 
 func (h *handler) GetAllOrders(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	w.Write([]byte("all orders"))
+	h.logger.Info("New GET request")
+
+	var orders []string
+
+	err := h.db.Select(&orders, "SELECT order_uid FROM orders")
+	if err != nil {
+		h.logger.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(orders); err != nil {
+		h.logger.Errorf("Failed to encode response: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	h.logger.Info("Orders is being viewed")
 }
 
 func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -45,12 +81,7 @@ func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params ht
 
 	var order Order
 
-	query := `
-        SELECT order_uid, track_number, entry, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard, locale, internal_signature
-        FROM orders
-        WHERE order_uid = $1
-    `
-	err := h.db.Get(&order, query, orderUID)
+	err := h.db.Get(&order, queryOrder, orderUID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			http.Error(w, "Order not found", http.StatusNotFound)
@@ -61,11 +92,6 @@ func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params ht
 		return
 	}
 
-	queryDelivery := `
-        SELECT name, phone, zip, city, address, region, email
-        FROM deliveries
-        WHERE order_uid = $1
-    `
 	err = h.db.Get(&order.Delivery, queryDelivery, orderUID)
 	if err != nil {
 		h.logger.Errorf("Failed to get delivery details: %v", err)
@@ -73,11 +99,6 @@ func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params ht
 		return
 	}
 
-	queryPayment := `
-        SELECT transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee
-        FROM payments
-        WHERE order_uid = $1
-    `
 	err = h.db.Get(&order.Payment, queryPayment, orderUID)
 	if err != nil {
 		h.logger.Errorf("Failed to get payment details: %v", err)
@@ -85,11 +106,6 @@ func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params ht
 		return
 	}
 
-	queryItems := `
-        SELECT chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status
-        FROM items
-        WHERE order_uid = $1
-    `
 	err = h.db.Select(&order.Items, queryItems, orderUID)
 	if err != nil {
 		h.logger.Errorf("Failed to get items: %v", err)
