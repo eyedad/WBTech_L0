@@ -1,0 +1,49 @@
+{
+	"order_uid": "i901feb7b2b84b6test",
+	"track_number": "TRACK901234",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Isabella Rossellini",
+		"phone": "+972901234567",
+		"zip": "9012345",
+		"city": "Rishon Lezion",
+		"address": "Hertzel St 9",
+		"region": "Center District",
+		"email": "isabella@example.com"
+	},
+	"payment": {
+		"transaction": "i901feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 650,
+		"payment_dt": 1637907727,
+		"bank": "bank9",
+		"delivery_cost": 60,
+		"goods_total": 590,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 9012345,
+			"track_number": "TRACK901234",
+			"price": 590,
+			"rid": "item901",
+			"name": "Portable SSD",
+			"sale": 10,
+			"size": "N/A",
+			"total_price": 590,
+			"nm_id": 901234,
+			"brand": "BrandI",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer9",
+	"delivery_service": "service9",
+	"shardkey": "9",
+	"sm_id": 9,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

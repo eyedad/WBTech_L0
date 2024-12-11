@@ -1,0 +1,49 @@
+{
+	"order_uid": "f678feb7b2b84b6test",
+	"track_number": "TRACK678901",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Fiona Gallagher",
+		"phone": "+972678901234",
+		"zip": "6789012",
+		"city": "Netanya",
+		"address": "Hamelech St 6",
+		"region": "Center District",
+		"email": "fiona@example.com"
+	},
+	"payment": {
+		"transaction": "f678feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 300,
+		"payment_dt": 1637907727,
+		"bank": "bank6",
+		"delivery_cost": 30,
+		"goods_total": 270,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 6789012,
+			"track_number": "TRACK678901",
+			"price": 270,
+			"rid": "item678",
+			"name": "Wireless Charger",
+			"sale": 5,
+			"size": "N/A",
+			"total_price": 270,
+			"nm_id": 678901,
+			"brand": "BrandF",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer6",
+	"delivery_service": "service6",
+	"shardkey": "6",
+	"sm_id": 6,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

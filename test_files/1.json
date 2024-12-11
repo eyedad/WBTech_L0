@@ -1,0 +1,49 @@
+{
+	"order_uid": "a123feb7b2b84b6test",
+	"track_number": "TRACK123456",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Alice Smith",
+		"phone": "+972123456789",
+		"zip": "1234567",
+		"city": "Tel Aviv",
+		"address": "Rothschild Blvd 1",
+		"region": "Tel Aviv",
+		"email": "alice@example.com"
+	},
+	"payment": {
+		"transaction": "a123feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 2500,
+		"payment_dt": 1637907727,
+		"bank": "bank1",
+		"delivery_cost": 200,
+		"goods_total": 2300,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 1234567,
+			"track_number": "TRACK123456",
+			"price": 2300,
+			"rid": "item123",
+			"name": "Laptop",
+			"sale": 0,
+			"size": "N/A",
+			"total_price": 2300,
+			"nm_id": 123456,
+			"brand": "BrandA",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer1",
+	"delivery_service": "service1",
+	"shardkey": "1",
+	"sm_id": 1,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

@@ -1,0 +1,49 @@
+{
+	"order_uid": "j012feb7b2b84b6test",
+	"track_number": "TRACK012345",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Jack Ryan",
+		"phone": "+972012345678",
+		"zip": "0123456",
+		"city": "Kfar Saba",
+		"address": "Hagolan St 10",
+		"region": "Center District",
+		"email": "jack@example.com"
+	},
+	"payment": {
+		"transaction": "j012feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 850,
+		"payment_dt": 1637907727,
+		"bank": "bank10",
+		"delivery_cost": 80,
+		"goods_total": 770,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 123456,
+			"track_number": "TRACK012345",
+			"price": 770,
+			"rid": "item012",
+			"name": "Action Camera",
+			"sale": 5,
+			"size": "N/A",
+			"total_price": 770,
+			"nm_id": 12345,
+			"brand": "BrandJ",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer10",
+	"delivery_service": "service10",
+	"shardkey": "10",
+	"sm_id": 10,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

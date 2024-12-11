@@ -6,15 +6,12 @@ import (
 	"net/http"
 	"time"
 
+	"example.com/m/v2/internal/config"
 	"example.com/m/v2/internal/order"
 	"example.com/m/v2/pkg/logging"
+	"example.com/m/v2/pkg/logging/repository"
 	"github.com/julienschmidt/httprouter"
 )
-
-func ViewHandler(w http.ResponseWriter, r http.Request, params httprouter.Params) {
-	name := params.ByName("name")
-	w.Write([]byte(fmt.Sprintf("Hello %s", name)))
-}
 
 func main() {
 	logger := logging.GetLogger()
@@ -22,21 +19,30 @@ func main() {
 	logger.Info("Creating router")
 	router := httprouter.New()
 
-	logger.Info("Register handlers")
-	handler := order.NewHandler(logger)
+	cfg := config.GetConfig()
+
+	logger.Info("Connecting to database")
+	db := repository.NewPostgresDB(cfg, logger)
+
+	handler := order.NewHandler(logger, db)
 	handler.Register(router)
 
-	logger.Info("Starting server")
-	start(router)
+	start(router, cfg)
 }
 
-func start(router *httprouter.Router) {
+func start(router *httprouter.Router, cfg *config.Config) {
 	logger := logging.GetLogger()
+	logger.Info("Starting server")
 
-	listener, err := net.Listen("tcp", ":1234")
+	var listener net.Listener
+	var err error
+
+	logger.Info("Listen tcp")
+	listener, err = net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
 	if err != nil {
 		panic(err)
 	}
+	logger.Infof("server is listening port %s:%s", cfg.Listen.BindIP, cfg.Listen.Port)
 
 	server := &http.Server{
 		Handler:      router,

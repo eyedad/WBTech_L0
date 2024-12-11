@@ -1,0 +1,49 @@
+{
+	"order_uid": "c345feb7b2b84b6test",
+	"track_number": "TRACK345678",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Charlie Brown",
+		"phone": "+972345678901",
+		"zip": "3456789",
+		"city": "Jerusalem",
+		"address": "King David St 3",
+		"region": "Jerusalem",
+		"email": "charlie@example.com"
+	},
+	"payment": {
+		"transaction": "c345feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 500,
+		"payment_dt": 1637907727,
+		"bank": "bank3",
+		"delivery_cost": 100,
+		"goods_total": 400,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 3456789,
+			"track_number": "TRACK345678",
+			"price": 400,
+			"rid": "item345",
+			"name": "Tablet",
+			"sale": 5,
+			"size": "N/A",
+			"total_price": 400,
+			"nm_id": 345678,
+			"brand": "BrandC",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer3",
+	"delivery_service": "service3",
+	"shardkey": "3",
+	"sm_id": 3,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

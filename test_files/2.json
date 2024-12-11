@@ -1,0 +1,49 @@
+{
+	"order_uid": "b234feb7b2b84b6test",
+	"track_number": "TRACK234567",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Bob Johnson",
+		"phone": "+972234567890",
+		"zip": "2345678",
+		"city": "Haifa",
+		"address": "HaNassi Blvd 2",
+		"region": "Haifa",
+		"email": "bob@example.com"
+	},
+	"payment": {
+		"transaction": "b234feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 1500,
+		"payment_dt": 1637907727,
+		"bank": "bank2",
+		"delivery_cost": 150,
+		"goods_total": 1350,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 2345678,
+			"track_number": "TRACK234567",
+			"price": 1350,
+			"rid": "item234",
+			"name": "Smartphone",
+			"sale": 10,
+			"size": "N/A",
+			"total_price": 1350,
+			"nm_id": 234567,
+			"brand": "BrandB",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer2",
+	"delivery_service": "service2",
+	"shardkey": "2",
+	"sm_id": 2,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

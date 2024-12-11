@@ -21,8 +21,8 @@ type Logger struct {
 	*logrus.Entry
 }
 
-func GetLogger() Logger {
-	return Logger{e}
+func GetLogger() *Logger {
+	return &Logger{e}
 }
 
 func (hook *WriterHook) Fire(entry *logrus.Entry) error {
@@ -52,12 +52,12 @@ func init() {
 		FullTimestamp: true,
 	}
 
-	err := os.Mkdir("logs", 0644)
+	err := os.Mkdir("logs", 0666)
 	if err != nil {
 		panic(err)
 	}
 
-	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}
