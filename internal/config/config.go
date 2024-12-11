@@ -8,11 +8,20 @@ import (
 )
 
 type Config struct {
-	IsDebug *bool `yaml:"is_bebug"`
+	IsDebug *bool  `yaml:"is_bebug"`
+	Logs    string `yaml:"logs"`
 	Listen  struct {
 		BindIP string `yaml:"bind_ip"`
 		Port   string `yaml:"port"`
 	} `yaml:"listen"`
+	Database struct {
+		Host     string `yaml:"host"`
+		DBPort   string `yaml:"db_port"`
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
+		DBName   string `yaml:"db_name"`
+		SSLMode  string `yaml:"ssl_mode"`
+	} `yaml:"database"`
 }
 
 var instance *Config

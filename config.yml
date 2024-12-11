@@ -1,6 +1,14 @@
 ---
 
 is_debug: true
+logs: 
 listen:
   bind_ip: 0.0.0.0
   port: 8080
+database:
+  host: localhost
+  db_port: 5432
+  username: postgres
+  password: 1234
+  db_name: postgres
+  ssl_mode: disable

@@ -9,6 +9,7 @@ import (
 	"example.com/m/v2/internal/config"
 	"example.com/m/v2/internal/order"
 	"example.com/m/v2/pkg/logging"
+	"example.com/m/v2/pkg/logging/repository"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -20,7 +21,10 @@ func main() {
 
 	cfg := config.GetConfig()
 
-	handler := order.NewHandler(logger)
+	logger.Info("Connecting to database")
+	db := repository.NewPostgresDB(cfg, logger)
+
+	handler := order.NewHandler(logger, db)
 	handler.Register(router)
 
 	start(router, cfg)
