@@ -1,12 +1,15 @@
 package order
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"example.com/m/v2/internal/handlers"
 	"example.com/m/v2/pkg/logging"
+	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/julienschmidt/httprouter"
 )
@@ -39,12 +42,14 @@ const (
 type handler struct {
 	logger *logging.Logger
 	db     *sqlx.DB
+	redis  *redis.Client
 }
 
-func NewHandler(logger *logging.Logger, db *sqlx.DB) handlers.Handler {
+func NewHandler(logger *logging.Logger, db *sqlx.DB, redis *redis.Client) handlers.Handler {
 	return &handler{
 		logger: logger,
 		db:     db,
+		redis:  redis,
 	}
 }
 
@@ -59,9 +64,15 @@ func (h *handler) GetAllOrders(w http.ResponseWriter, r *http.Request, params ht
 
 	var orders []string
 
-	err := h.db.Select(&orders, "SELECT order_uid FROM orders")
-	if err != nil {
-		h.logger.Fatal(err)
+	if data, err := h.redis.Get(context.Background(), "orders").Result(); err == redis.Nil || data == "null" {
+		orders = h.GetAllOrdersFromDB()
+	} else if err != nil {
+		h.logger.Error(err)
+	} else {
+		err = json.Unmarshal([]byte(data), &orders)
+		if err != nil {
+			h.logger.Error(err)
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -74,42 +85,43 @@ func (h *handler) GetAllOrders(w http.ResponseWriter, r *http.Request, params ht
 	h.logger.Info("All orders ids are being viewed")
 }
 
+func (h *handler) GetAllOrdersFromDB() []string {
+	h.logger.Info("New GET request")
+
+	var orders []string
+
+	err := h.db.Select(&orders, "SELECT order_uid FROM orders")
+	if err != nil {
+		h.logger.Error(err)
+	}
+
+	data, err := json.Marshal(orders)
+	if err != nil {
+		h.logger.Error(err)
+	}
+
+	err = h.redis.Set(context.Background(), "orders", data, 10*time.Second).Err()
+	if err != nil {
+		h.logger.Errorf("Failed to set orders in Redis: %v", err)
+	}
+	return orders
+}
+
 func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	h.logger.Info("New GET request")
 	orderUID := params.ByName("id")
 
 	var order Order
 
-	err := h.db.Get(&order, queryOrder, orderUID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			http.Error(w, "Order not found", http.StatusNotFound)
-			return
+	if order, err := h.getOrderFromRedis(orderUID); err == redis.Nil {
+		err := h.GetOrderFromDB(order, orderUID, w)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.Error(w, "Order not found", http.StatusNotFound)
+				return
+			}
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 		}
-		h.logger.Errorf("Failed to get order: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	err = h.db.Get(&order.Delivery, queryDelivery, orderUID)
-	if err != nil {
-		h.logger.Errorf("Failed to get delivery details: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	err = h.db.Get(&order.Payment, queryPayment, orderUID)
-	if err != nil {
-		h.logger.Errorf("Failed to get payment details: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-
-	err = h.db.Select(&order.Items, queryItems, orderUID)
-	if err != nil {
-		h.logger.Errorf("Failed to get items: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -122,6 +134,69 @@ func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params ht
 	h.logger.Infof("Order is being viewed, id: %s", order.OrderUID)
 }
 
+func (h *handler) GetOrderFromDB(order Order, orderUID string, w http.ResponseWriter) error {
+	err := h.db.Get(&order, queryOrder, orderUID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			h.logger.Errorf("Failed to get order: %v", err)
+		}
+		return err
+	}
+
+	err = h.db.Get(&order.Delivery, queryDelivery, orderUID)
+	if err != nil {
+		h.logger.Errorf("Failed to get delivery details: %v", err)
+		return err
+	}
+
+	err = h.db.Get(&order.Payment, queryPayment, orderUID)
+	if err != nil {
+		h.logger.Errorf("Failed to get payment details: %v", err)
+		return err
+	}
+
+	err = h.db.Select(&order.Items, queryItems, orderUID)
+	if err != nil {
+		h.logger.Errorf("Failed to get items: %v", err)
+		return err
+	}
+
+	err = h.saveOrderToRedis(orderUID, order)
+	if err != nil {
+		h.logger.Errorf("failed to set order in Redis: %v", err)
+		return nil
+	}
+	return nil
+}
+
+func (h *handler) saveOrderToRedis(key string, order Order) error {
+	jsonData, err := json.Marshal(order)
+	if err != nil {
+		return err
+	}
+	err = h.redis.Set(context.Background(), key, jsonData, 10*time.Second).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (h *handler) getOrderFromRedis(key string) (Order, error) {
+	data, err := h.redis.Get(context.Background(), key).Result()
+	if err != nil {
+		return Order{}, err
+	}
+
+	var order Order
+	err = json.Unmarshal([]byte(data), &order)
+	if err != nil {
+		return Order{}, err
+	}
+
+	return order, nil
+}
+
 func (h *handler) AddOrder(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	h.logger.Info("New POST request")
 
@@ -131,28 +206,10 @@ func (h *handler) AddOrder(w http.ResponseWriter, r *http.Request, params httpro
 		return
 	}
 
-	tx, err := h.db.Beginx()
+	err := h.insertOrder(order)
 	if err != nil {
-		h.logger.Errorf("Failed to begin transaction: %v", err)
-		http.Error(w, "Internal server error", http.StatusBadRequest)
-		return
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback()
-		}
-	}()
-
-	if err := h.insertOrder(tx, order); err != nil {
-		h.logger.Error(err)
-		http.Error(w, "Internal server error", http.StatusBadRequest)
-		return
-	}
-
-	if err := tx.Commit(); err != nil {
 		h.logger.Errorf("Failed to commit transaction: %v", err)
 		http.Error(w, "Internal server error", http.StatusBadRequest)
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -161,7 +218,17 @@ func (h *handler) AddOrder(w http.ResponseWriter, r *http.Request, params httpro
 	h.logger.Infof("Order created successfully, id: %s", order.OrderUID)
 }
 
-func (h *handler) insertOrder(tx *sqlx.Tx, order Order) error {
+func (h *handler) insertOrder(order Order) error {
+	tx, err := h.db.Beginx()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
 	if err := h.insertIntoOrders(tx, order); err != nil {
 		return err
 	}
@@ -174,6 +241,16 @@ func (h *handler) insertOrder(tx *sqlx.Tx, order Order) error {
 	if err := h.insertIntoItems(tx, order); err != nil {
 		return err
 	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	err = h.redis.Set(context.Background(), "orders", "null", 10*time.Second).Err()
+	if err != nil {
+		h.logger.Errorf("Failed to set orders in Redis: %v", err)
+	}
+
 	return nil
 }
 
