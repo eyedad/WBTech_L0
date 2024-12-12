@@ -1,0 +1,11 @@
+{"file":"app.go:23","func":"main.main()","level":"info","msg":"Creating router","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:26","func":"main.main()","level":"info","msg":"Reading configuration","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:29","func":"main.main()","level":"info","msg":"Connecting to database","time":"2024-12-12T20:11:43+07:00"}
+{"file":"postgres.go:15","func":"example.com/m/v2/pkg/postgers.New()","level":"info","msg":"host=localhost port=5432 user=postgres dbname=postgres password=1234 sslmode=disable","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:32","func":"main.main()","level":"info","msg":"Register handlers","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:36","func":"main.main()","level":"info","msg":"Connecting to server","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:59","func":"main.start()","level":"info","msg":"Starting server","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:64","func":"main.start()","level":"info","msg":"Listen tcp","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:69","func":"main.start()","level":"info","msg":"server is listening port 0.0.0.0:8080","time":"2024-12-12T20:11:43+07:00"}
+{"file":"app.go:48","func":"main.main()","level":"info","msg":"Shutting down","time":"2024-12-12T20:14:52+07:00"}
+{"file":"app.go:71","func":"main.start()","level":"fatal","msg":"http: Server closed","time":"2024-12-12T20:14:52+07:00"}
