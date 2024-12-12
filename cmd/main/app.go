@@ -14,6 +14,7 @@ import (
 	"example.com/m/v2/internal/order"
 	"example.com/m/v2/pkg/logging"
 	"example.com/m/v2/pkg/postgers"
+	"example.com/m/v2/pkg/redis"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -29,8 +30,11 @@ func main() {
 	logger.Info("Connecting to database")
 	db := postgers.New(cfg, logger)
 
+	logger.Info("Connecting to redis client")
+	redis := redis.GetClient()
+
 	logger.Info("Register handlers")
-	handler := order.NewHandler(logger, db)
+	handler := order.NewHandler(logger, db, redis)
 	handler.Register(router)
 
 	logger.Info("Connecting to server")
