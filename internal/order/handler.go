@@ -42,7 +42,6 @@ type handler struct {
 }
 
 func NewHandler(logger *logging.Logger, db *sqlx.DB) handlers.Handler {
-	logger.Info("Register handlers")
 	return &handler{
 		logger: logger,
 		db:     db,
@@ -72,7 +71,7 @@ func (h *handler) GetAllOrders(w http.ResponseWriter, r *http.Request, params ht
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	h.logger.Info("Orders is being viewed")
+	h.logger.Info("All orders ids are being viewed")
 }
 
 func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

@@ -44,20 +44,20 @@ func (hook *WriterHook) Levels() []logrus.Level {
 func init() {
 	l := logrus.New()
 	l.SetReportCaller(true)
-	l.Formatter = &logrus.TextFormatter{
+
+	l.Formatter = &logrus.JSONFormatter{
 		CallerPrettyfier: func(frame *runtime.Frame) (function string, file string) {
 			filename := path.Base(frame.File)
 			return fmt.Sprintf("%s()", frame.Function), fmt.Sprintf("%s:%d", filename, frame.Line)
 		},
-		FullTimestamp: true,
 	}
 
-	err := os.Mkdir("logs", 0666)
-	if err != nil {
+	err := os.Mkdir("logs", 0777)
+	if err != nil && err.Error() != "mkdir logs: file exists" {
 		panic(err)
 	}
 
-	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	allFile, err := os.OpenFile("logs/all.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0777)
 	if err != nil {
 		panic(err)
 	}

@@ -11,8 +11,10 @@ type Config struct {
 	IsDebug *bool  `yaml:"is_bebug"`
 	Logs    string `yaml:"logs"`
 	Listen  struct {
-		BindIP string `yaml:"bind_ip"`
-		Port   string `yaml:"port"`
+		BindIP       string `yaml:"bind_ip"`
+		Port         string `yaml:"port"`
+		WriteTimeout int    `yaml:"write_timeout"`
+		ReadTimeout  int    `yaml:"read_timeout"`
 	} `yaml:"listen"`
 	Database struct {
 		Host     string `yaml:"host"`
@@ -30,7 +32,6 @@ var once sync.Once
 func GetConfig() *Config {
 	once.Do(func() {
 		logger := logging.GetLogger()
-		logger.Info("Reading configuration")
 		instance = &Config{}
 		if err := cleanenv.ReadConfig("config.yml", instance); err != nil {
 			help, _ := cleanenv.GetDescription(instance, nil)
