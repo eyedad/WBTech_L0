@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"context"
@@ -10,31 +10,24 @@ import (
 	"syscall"
 	"time"
 
-	"example.com/m/v2/internal/config"
-	"example.com/m/v2/internal/order"
+	"example.com/m/v2/config"
+	v1 "example.com/m/v2/internal/delivery/http/v1"
+	"example.com/m/v2/internal/repository"
+	"example.com/m/v2/internal/usecase"
 	"example.com/m/v2/pkg/logging"
-	"example.com/m/v2/pkg/postgers"
-	"example.com/m/v2/pkg/redis"
 	"github.com/julienschmidt/httprouter"
 )
 
-func main() {
+func Run(cfg *config.Config) {
 	logger := logging.GetLogger()
 
 	logger.Info("Creating router")
 	router := httprouter.New()
 
-	logger.Info("Reading configuration")
-	cfg := config.GetConfig()
-
-	logger.Info("Connecting to database")
-	db := postgers.New(cfg, logger)
-
-	logger.Info("Connecting to redis client")
-	redis := redis.GetClient()
-
 	logger.Info("Register handlers")
-	handler := order.NewHandler(logger, db, redis)
+	repository := repository.New(cfg, logger)
+	usecase := usecase.New(repository)
+	handler := v1.NewHandler(logger, usecase)
 	handler.Register(router)
 
 	logger.Info("Connecting to server")
@@ -53,7 +46,7 @@ func main() {
 	if err := server.Shutdown(context.Background()); err != nil {
 		logger.Errorf("Error occured while server shutting down, error: %s", err.Error())
 	}
-	if err := db.Close(); err != nil {
+	if err := repository.Close(); err != nil {
 		logger.Errorf("Error occured while closing db connection, error: %s", err.Error())
 	}
 }

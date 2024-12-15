@@ -1,19 +1,15 @@
-package redis
+package redisCache
 
 import (
+	"fmt"
+
 	"github.com/go-redis/redis/v8"
 )
 
-var rdb *redis.Client
-
-func InitRedis() {
-	rdb = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-		DB:   0,
+func New(host string, port string, db int) *redis.Client {
+	rdb := redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%s", host, port),
+		DB:   db,
 	})
-}
-
-func GetClient() *redis.Client {
-	InitRedis()
 	return rdb
 }
