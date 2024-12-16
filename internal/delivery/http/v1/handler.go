@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -11,12 +12,14 @@ import (
 )
 
 type handler struct {
+	ctx     context.Context
 	logger  *logging.Logger
 	usecase *usecase.Usecase
 }
 
-func NewHandler(logger *logging.Logger, usecase *usecase.Usecase) Handler {
+func NewHandler(ctx context.Context, logger *logging.Logger, usecase *usecase.Usecase) Handler {
 	return &handler{
+		ctx:     ctx,
 		logger:  logger,
 		usecase: usecase,
 	}
@@ -31,7 +34,7 @@ func (h *handler) Register(router *httprouter.Router) {
 func (h *handler) GetAllOrders(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	h.logger.Info("New GET request")
 
-	orders, err := h.usecase.GetAllOrders()
+	orders, err := h.usecase.GetAllOrders(h.ctx)
 	if err != nil {
 		h.logger.Errorf("Failed to get orders: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -54,7 +57,7 @@ func (h *handler) GetOrderById(w http.ResponseWriter, r *http.Request, params ht
 
 	var order entity.Order
 
-	err := h.usecase.GetOrderById(&order, orderUID)
+	err := h.usecase.GetOrderById(h.ctx, &order, orderUID)
 	if err != nil {
 		h.logger.Errorf("Failed to get order %s: %v", orderUID, err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -80,7 +83,7 @@ func (h *handler) AddOrder(w http.ResponseWriter, r *http.Request, params httpro
 		return
 	}
 
-	err := h.usecase.InsertOrder(&order)
+	err := h.usecase.InsertOrder(h.ctx, &order)
 	if err != nil {
 		h.logger.Errorf("Failed to insert order: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

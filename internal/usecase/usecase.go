@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"time"
 
 	"example.com/m/v2/internal/entity"
@@ -16,16 +17,16 @@ func New(r *repository.Repository) *Usecase {
 	return &Usecase{r}
 }
 
-func (u *Usecase) GetAllOrders() ([]string, error) {
+func (u *Usecase) GetAllOrders(ctx context.Context) ([]string, error) {
 
-	orders, err := u.r.GetAllOrdersFromCache()
+	orders, err := u.r.GetAllOrdersFromCache(ctx)
 	if err == redis.Nil {
 		orders, err = u.r.GetAllOrdersFromDB()
 		time.Sleep(3 * time.Second)
 		if err != nil {
 			return nil, err
 		}
-		err = u.r.InsertAllOrdersIntoCache(orders)
+		err = u.r.InsertAllOrdersIntoCache(ctx, orders)
 		if err != nil {
 			return nil, err
 		}
@@ -33,8 +34,8 @@ func (u *Usecase) GetAllOrders() ([]string, error) {
 	return orders, nil
 }
 
-func (u *Usecase) GetOrderById(order *entity.Order, orderUID string) error {
-	order, err := u.r.GetOrderFromCache(order, orderUID)
+func (u *Usecase) GetOrderById(ctx context.Context, order *entity.Order, orderUID string) error {
+	order, err := u.r.GetOrderFromCache(ctx, order, orderUID)
 	if err == redis.Nil {
 		err := u.r.GetOrderFromDB(order, orderUID)
 		time.Sleep(3 * time.Second)
@@ -43,20 +44,20 @@ func (u *Usecase) GetOrderById(order *entity.Order, orderUID string) error {
 			return err
 		}
 	}
-	err = u.r.InserOrderIntoCache(order)
+	err = u.r.InserOrderIntoCache(ctx, order)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *Usecase) InsertOrder(order *entity.Order) error {
+func (u *Usecase) InsertOrder(ctx context.Context, order *entity.Order) error {
 	err := u.r.InsertOrderIntoDB(order)
 	time.Sleep(3 * time.Second)
 	if err != nil {
 		return err
 	}
-	err = u.r.InserOrderIntoCache(order)
+	err = u.r.InserOrderIntoCache(ctx, order)
 	if err != nil {
 		return err
 	}

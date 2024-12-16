@@ -9,8 +9,8 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-func (r *Repository) GetAllOrdersFromCache() ([]string, error) {
-	data, err := r.cache.Get(context.Background(), "orders").Result()
+func (r *Repository) GetAllOrdersFromCache(ctx context.Context) ([]string, error) {
+	data, err := r.cache.Get(ctx, "orders").Result()
 	if err != nil {
 		return nil, err
 	}
@@ -27,13 +27,13 @@ func (r *Repository) GetAllOrdersFromCache() ([]string, error) {
 
 	return orders, nil
 }
-func (r *Repository) InsertAllOrdersIntoCache(orders []string) error {
+func (r *Repository) InsertAllOrdersIntoCache(ctx context.Context, orders []string) error {
 	jsonData, err := json.Marshal(orders)
 	if err != nil {
 		return err
 	}
 
-	err = r.cache.Set(context.Background(), "orders", jsonData, 10*time.Second).Err()
+	err = r.cache.Set(ctx, "orders", jsonData, 10*time.Second).Err()
 	if err != nil {
 		return err
 	}
@@ -41,8 +41,8 @@ func (r *Repository) InsertAllOrdersIntoCache(orders []string) error {
 	return nil
 }
 
-func (r *Repository) GetOrderFromCache(order *entity.Order, key string) (*entity.Order, error) {
-	data, err := r.cache.Get(context.Background(), key).Result()
+func (r *Repository) GetOrderFromCache(ctx context.Context, order *entity.Order, key string) (*entity.Order, error) {
+	data, err := r.cache.Get(ctx, key).Result()
 	if err != nil {
 		return order, err
 	}
@@ -55,13 +55,13 @@ func (r *Repository) GetOrderFromCache(order *entity.Order, key string) (*entity
 	return order, nil
 }
 
-func (r *Repository) InserOrderIntoCache(order *entity.Order) error {
+func (r *Repository) InserOrderIntoCache(ctx context.Context, order *entity.Order) error {
 	jsonData, err := json.Marshal(order)
 	if err != nil {
 		return err
 	}
 
-	err = r.cache.Set(context.Background(), order.OrderUID, jsonData, 10*time.Second).Err()
+	err = r.cache.Set(ctx, order.OrderUID, jsonData, 10*time.Second).Err()
 	if err != nil {
 		return err
 	}

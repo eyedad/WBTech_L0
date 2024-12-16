@@ -24,7 +24,7 @@ func Run(ctx context.Context, cfg *config.Config) {
 	logger.Info("Register handlers")
 	repository := repository.New(cfg, logger)
 	usecase := usecase.New(repository)
-	handler := v1.NewHandler(logger, usecase)
+	handler := v1.NewHandler(ctx, logger, usecase)
 	handler.Register(router)
 
 	logger.Info("Connecting to server")
