@@ -50,11 +50,8 @@ func start(cfg *config.Config, server *http.Server) {
 	logger := logging.GetLogger()
 	logger.Info("Starting server")
 
-	var listener net.Listener
-	var err error
-
 	logger.Info("Listen tcp")
-	listener, err = net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
 	if err != nil {
 		panic(err)
 	}
