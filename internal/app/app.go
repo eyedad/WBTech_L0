@@ -1,40 +1,30 @@
-package main
+package app
 
 import (
 	"context"
 	"fmt"
 	"net"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
-	"example.com/m/v2/internal/config"
-	"example.com/m/v2/internal/order"
+	"example.com/m/v2/config"
+	v1 "example.com/m/v2/internal/delivery/http/v1"
+	"example.com/m/v2/internal/repository"
+	"example.com/m/v2/internal/usecase"
 	"example.com/m/v2/pkg/logging"
-	"example.com/m/v2/pkg/postgers"
-	"example.com/m/v2/pkg/redis"
 	"github.com/julienschmidt/httprouter"
 )
 
-func main() {
+func Run(ctx context.Context, cfg *config.Config) {
 	logger := logging.GetLogger()
 
 	logger.Info("Creating router")
 	router := httprouter.New()
 
-	logger.Info("Reading configuration")
-	cfg := config.GetConfig()
-
-	logger.Info("Connecting to database")
-	db := postgers.New(cfg, logger)
-
-	logger.Info("Connecting to redis client")
-	redis := redis.GetClient()
-
 	logger.Info("Register handlers")
-	handler := order.NewHandler(logger, db, redis)
+	repository := repository.New(cfg, logger)
+	usecase := usecase.New(repository)
+	handler := v1.NewHandler(ctx, logger, usecase)
 	handler.Register(router)
 
 	logger.Info("Connecting to server")
@@ -45,16 +35,14 @@ func main() {
 	}
 	go start(cfg, server)
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-	<-quit
+	<-ctx.Done()
 
 	logger.Info("Shutting down")
 	if err := server.Shutdown(context.Background()); err != nil {
 		logger.Errorf("Error occured while server shutting down, error: %s", err.Error())
 	}
-	if err := db.Close(); err != nil {
-		logger.Errorf("Error occured while closing db connection, error: %s", err.Error())
+	if err := repository.Close(); err != nil {
+		logger.Errorf("Error occured while closing repository connection, error: %s", err.Error())
 	}
 }
 
@@ -62,11 +50,8 @@ func start(cfg *config.Config, server *http.Server) {
 	logger := logging.GetLogger()
 	logger.Info("Starting server")
 
-	var listener net.Listener
-	var err error
-
 	logger.Info("Listen tcp")
-	listener, err = net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
 	if err != nil {
 		panic(err)
 	}

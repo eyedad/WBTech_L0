@@ -1,9 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"sync"
 
-	"example.com/m/v2/pkg/logging"
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
@@ -16,28 +16,41 @@ type Config struct {
 		WriteTimeout int    `yaml:"write_timeout"`
 		ReadTimeout  int    `yaml:"read_timeout"`
 	} `yaml:"listen"`
-	Database struct {
-		Host     string `yaml:"host"`
+	Postgers struct {
+		DBHost   string `yaml:"db_host"`
 		DBPort   string `yaml:"db_port"`
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
 		DBName   string `yaml:"db_name"`
 		SSLMode  string `yaml:"ssl_mode"`
 	} `yaml:"database"`
+	Redis struct {
+		RedisHost string `yaml:"redis_host"`
+		RedisPort string `yaml:"redis_port"`
+		RedisDB   int    `yaml:"redis_db"`
+	} `yaml:"cache"`
 }
 
 var instance *Config
 var once sync.Once
 
-func GetConfig() *Config {
+func GetConfig() (*Config, error) {
+	var err error
 	once.Do(func() {
-		logger := logging.GetLogger()
 		instance = &Config{}
-		if err := cleanenv.ReadConfig("config.yml", instance); err != nil {
-			help, _ := cleanenv.GetDescription(instance, nil)
-			logger.Info(help)
-			logger.Fatal(err)
-		}
+		cleanenv.ReadConfig("config/config.yml", instance)
 	})
-	return instance
+	return instance, err
+}
+
+func (cfg Config) GetDNS() string {
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+		cfg.Postgers.DBHost,
+		cfg.Postgers.DBPort,
+		cfg.Postgers.Username,
+		cfg.Postgers.DBName,
+		cfg.Postgers.Password,
+		cfg.Postgers.SSLMode,
+	)
 }
