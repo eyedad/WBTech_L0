@@ -30,5 +30,11 @@ func New(cfg *config.Config, logger *logging.Logger) *Repository {
 }
 
 func (r *Repository) Close() error {
-	return r.db.Close()
+	err := r.cache.Close()
+	if err != nil {
+		return err
+	}
+	err = r.db.Close()
+
+	return err
 }

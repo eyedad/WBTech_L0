@@ -22,15 +22,10 @@ func NewHandler(logger *logging.Logger, usecase *usecase.Usecase) Handler {
 	}
 }
 
-const (
-	ordersURl = "/orders"
-	orderURl  = "/orders/:id"
-)
-
 func (h *handler) Register(router *httprouter.Router) {
-	router.GET(ordersURl, h.GetAllOrders)
-	router.GET(orderURl, h.GetOrderById)
-	router.POST(ordersURl, h.AddOrder)
+	router.GET("/orders", h.GetAllOrders)
+	router.GET("/orders/:id", h.GetOrderById)
+	router.POST("/orders/:id", h.AddOrder)
 }
 
 func (h *handler) GetAllOrders(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"example.com/m/v2/config"
@@ -18,7 +15,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func Run(cfg *config.Config) {
+func Run(ctx context.Context, cfg *config.Config) {
 	logger := logging.GetLogger()
 
 	logger.Info("Creating router")
@@ -38,16 +35,14 @@ func Run(cfg *config.Config) {
 	}
 	go start(cfg, server)
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-	<-quit
+	<-ctx.Done()
 
 	logger.Info("Shutting down")
 	if err := server.Shutdown(context.Background()); err != nil {
 		logger.Errorf("Error occured while server shutting down, error: %s", err.Error())
 	}
 	if err := repository.Close(); err != nil {
-		logger.Errorf("Error occured while closing db connection, error: %s", err.Error())
+		logger.Errorf("Error occured while closing repository connection, error: %s", err.Error())
 	}
 }
 
