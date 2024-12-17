@@ -13,6 +13,9 @@ services:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: 1234
+    volumes:
+      - ./migrations:/migrations:z
+      - ./migrations/run-migrations.sh:/docker-entrypoint-initdb.d/run-migrations.sh:z
   redis:
     image: redis:latest
     container_name: redis
