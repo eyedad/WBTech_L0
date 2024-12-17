@@ -57,5 +57,10 @@ func (u *Usecase) InsertOrder(ctx context.Context, order *entity.Order) error {
 	if err != nil {
 		return err
 	}
+
+	err = u.r.Produce("orders", order)
+	if err != nil {
+		return err
+	}
 	return nil
 }

@@ -29,6 +29,10 @@ type Config struct {
 		RedisPort string `yaml:"redis_port"`
 		RedisDB   int    `yaml:"redis_db"`
 	} `yaml:"cache"`
+	Kafka struct {
+		Brokers string `yaml:"brokers"`
+		GroupID string `yaml:"group_id"`
+	} `yaml:"kafka"`
 }
 
 var instance *Config
