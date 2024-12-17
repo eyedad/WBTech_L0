@@ -1,0 +1,49 @@
+{
+	"order_uid": "e567feb7b2b84b6test",
+	"track_number": "TRACK567890",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Ethan Hunt",
+		"phone": "+972567890123",
+		"zip": "5678901",
+		"city": "Ashdod",
+		"address": "Hertzel St 5",
+		"region": "Ashdod",
+		"email": "ethan@example.com"
+	},
+	"payment": {
+		"transaction": "e567feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 1200,
+		"payment_dt": 1637907727,
+		"bank": "bank5",
+		"delivery_cost": 100,
+		"goods_total": 1100,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 5678901,
+			"track_number": "TRACK567890",
+			"price": 1100,
+			"rid": "item567",
+			"name": "Smartwatch",
+			"sale": 20,
+			"size": "N/A",
+			"total_price": 1100,
+			"nm_id": 567890,
+			"brand": "BrandE",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer5",
+	"delivery_service": "service5",
+	"shardkey": "5",
+	"sm_id": 5,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

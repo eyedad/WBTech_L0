@@ -1,0 +1,49 @@
+{
+	"order_uid": "g789feb7b2b84b6test",
+	"track_number": "TRACK789012",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Gina Carano",
+		"phone": "+972789012345",
+		"zip": "7890123",
+		"city": "Rehovot",
+		"address": "Einstein St 7",
+		"region": "Center District",
+		"email": "gina@example.com"
+	},
+	"payment": {
+		"transaction": "g789feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 950,
+		"payment_dt": 1637907727,
+		"bank": "bank7",
+		"delivery_cost": 70,
+		"goods_total": 880,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 7890123,
+			"track_number": "TRACK789012",
+			"price": 880,
+			"rid": "item789",
+			"name": "Bluetooth Speaker",
+			"sale": 10,
+			"size": "N/A",
+			"total_price": 880,
+			"nm_id": 789012,
+			"brand": "BrandG",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer7",
+	"delivery_service": "service7",
+	"shardkey": "7",
+	"sm_id": 7,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}

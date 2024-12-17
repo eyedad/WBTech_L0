@@ -1,0 +1,75 @@
+{
+	"order_uid": "h890feb7b2b84b6test",
+	"track_number": "TRACK890123",
+	"entry": "WBIL",
+	"delivery": {
+		"name": "Henry Cavill",
+		"phone": "+972890123456",
+		"zip": "8901234",
+		"city": "Bat Yam",
+		"address": "Yitzhak Sadeh St 8",
+		"region": "Tel Aviv",
+		"email": "henry@example.com"
+	},
+	"payment": {
+		"transaction": "h890feb7b2b84b6test",
+		"request_id": "",
+		"currency": "USD",
+		"provider": "wbpay",
+		"amount": 400,
+		"payment_dt": 1637907727,
+		"bank": "bank8",
+		"delivery_cost": 20,
+		"goods_total": 380,
+		"custom_fee": 0
+	},
+	"items": [
+		{
+			"chrt_id": 8901234,
+			"track_number": "TRACK890123",
+			"price": 380,
+			"rid": "item890",
+			"name": "Gaming Mouse",
+			"sale": 5,
+			"size": "N/A",
+			"total_price": 380,
+			"nm_id": 890123,
+			"brand": "BrandH",
+			"status": 202
+		},
+		{
+			"chrt_id": 5678901,
+			"track_number": "TRACK567890",
+			"price": 1100,
+			"rid": "item567",
+			"name": "Smartwatch",
+			"sale": 20,
+			"size": "N/A",
+			"total_price": 1100,
+			"nm_id": 567890,
+			"brand": "BrandE",
+			"status": 202
+		},
+		{
+			"chrt_id": 1234567,
+			"track_number": "TRACK123456",
+			"price": 2300,
+			"rid": "item123",
+			"name": "Laptop",
+			"sale": 0,
+			"size": "N/A",
+			"total_price": 2300,
+			"nm_id": 123456,
+			"brand": "BrandA",
+			"status": 202
+		}
+	],
+	"locale": "en",
+	"internal_signature": "",
+	"customer_id": "customer8",
+	"delivery_service": "service8",
+	"shardkey": "8",
+	"sm_id": 8,
+	"date_created": "2021-11-26T06:22:19Z",
+	"oof_shard": "1"
+}
