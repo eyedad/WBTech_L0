@@ -20,4 +20,3 @@ cache:
   redis_db: 0
 kafka:
   brokers: "localhost:9092"
-  group_id: "your_group_id"
