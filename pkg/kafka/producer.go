@@ -26,10 +26,10 @@ func (p *Producer) Produce(topic string, key string, value []byte) error {
 	if err != nil {
 		return err
 	}
-	p.producer.Flush(0)
 	return nil
 }
 
 func (p *Producer) Close() {
+	p.producer.Flush(5000)
 	p.producer.Close()
 }
