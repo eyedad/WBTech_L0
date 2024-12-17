@@ -33,12 +33,7 @@ func (r *Repository) InsertAllOrdersIntoCache(ctx context.Context, orders []stri
 		return err
 	}
 
-	err = r.cache.Set(ctx, "orders", jsonData, 10*time.Second).Err()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return r.cache.Set(ctx, "orders", jsonData, 10*time.Second).Err()
 }
 
 func (r *Repository) GetOrderFromCache(ctx context.Context, order *entity.Order, key string) (*entity.Order, error) {
@@ -61,10 +56,5 @@ func (r *Repository) InserOrderIntoCache(ctx context.Context, order *entity.Orde
 		return err
 	}
 
-	err = r.cache.Set(ctx, order.OrderUID, jsonData, 10*time.Second).Err()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return r.cache.Set(ctx, order.OrderUID, jsonData, 10*time.Second).Err()
 }

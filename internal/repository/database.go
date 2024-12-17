@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"database/sql"
 	"fmt"
 
 	"example.com/m/v2/internal/entity"
@@ -113,13 +112,8 @@ func getFromOrders(db *sqlx.DB, order *entity.Order, orderUID string) error {
 	SELECT order_uid, track_number, entry, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard, locale, internal_signature
 	FROM orders WHERE order_uid = $1
 `
-	err := db.Get(order, query, orderUID)
-	if err != nil {
-		if err != sql.ErrNoRows {
-		}
-		return err
-	}
-	return nil
+
+	return db.Get(order, query, orderUID)
 }
 
 func getFromDeliveries(db *sqlx.DB, order *entity.Order, orderUID string) error {
@@ -127,11 +121,9 @@ func getFromDeliveries(db *sqlx.DB, order *entity.Order, orderUID string) error 
         SELECT name, phone, zip, city, address, region, email
         FROM deliveries WHERE order_uid = $1
     `
-	err := db.Get(&order.Delivery, query, orderUID)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return db.Get(&order.Delivery, query, orderUID)
+
 }
 
 func getFromPayments(db *sqlx.DB, order *entity.Order, orderUID string) error {
@@ -140,11 +132,7 @@ func getFromPayments(db *sqlx.DB, order *entity.Order, orderUID string) error {
         FROM payments WHERE order_uid = $1
     `
 
-	err := db.Get(&order.Payment, query, orderUID)
-	if err != nil {
-		return err
-	}
-	return nil
+	return db.Get(&order.Payment, query, orderUID)
 }
 
 func getFromItems(db *sqlx.DB, order *entity.Order, orderUID string) error {
@@ -153,20 +141,13 @@ func getFromItems(db *sqlx.DB, order *entity.Order, orderUID string) error {
 	FROM items WHERE order_uid = $1
 `
 
-	err := db.Select(&order.Items, query, orderUID)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return db.Select(&order.Items, query, orderUID)
 }
 
 func (r *Repository) GetAllOrdersFromDB() ([]string, error) {
 	var orders []string
 
 	err := r.db.Select(&orders, "SELECT order_uid FROM orders")
-	if err != nil {
-		return nil, err
-	}
-	return orders, nil
+
+	return orders, err
 }

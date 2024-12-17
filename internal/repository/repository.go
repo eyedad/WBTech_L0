@@ -18,9 +18,9 @@ type Repository struct {
 
 func New(cfg *config.Config, logger *logging.Logger) *Repository {
 	logger.Info("Connecting to database")
-	dns := cfg.GetDNS()
-	logger.Info(dns)
-	db, err := postgersDB.New(dns)
+	dsn := cfg.GetDNS()
+	logger.Info(dsn)
+	db, err := postgersDB.New(dsn)
 	if err != nil {
 		logger.Fatalf("Faild to connect to ddatabase. error: %v", err)
 	}
@@ -44,10 +44,6 @@ func (r *Repository) Close() error {
 	if err != nil {
 		return err
 	}
-	err = r.db.Close()
-	if err != nil {
-		return err
-	}
 
-	return err
+	return r.db.Close()
 }
